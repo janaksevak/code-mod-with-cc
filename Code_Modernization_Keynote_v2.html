@@ -549,7 +549,7 @@ td{padding:14px 18px;border-bottom:1px solid rgba(0,0,0,0.06)}
 :fullscreen .nav-bar{display:none}:-webkit-full-screen .nav-bar{display:none}
 :fullscreen .progress-bar{display:none}:-webkit-full-screen .progress-bar{display:none}
 .presenter-overlay{display:none;position:fixed;inset:0;z-index:200;background:#111;color:#ddd;font-family:var(--font-body);padding:24px;overflow-y:auto}
-.presenter-overlay.open{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:auto 1fr;gap:20px}
+.presenter-overlay.open{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:auto 1fr auto auto;gap:16px}
 .presenter-header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #333}
 .presenter-header h3{font-size:23px;color:var(--accent);font-weight:600}
 .presenter-timer{font-family:var(--font-mono);font-size:41px;color:#fff;letter-spacing:0.05em}
@@ -559,8 +559,12 @@ td{padding:14px 18px;border-bottom:1px solid rgba(0,0,0,0.06)}
 .presenter-notes{flex:1;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:20px;overflow-y:auto}
 .presenter-notes h4{font-size:18px;text-transform:uppercase;letter-spacing:0.08em;color:#666;margin-bottom:12px}
 .presenter-notes p{font-size:22px;line-height:1.7;color:#ccc}
-.presenter-nav{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:16px;padding-top:16px;border-top:1px solid #333}
+.presenter-nav{grid-column:1;display:flex;align-items:center;justify-content:center;gap:16px;padding-top:16px;border-top:1px solid #333}
 .presenter-nav .nav-btn{padding:10px 28px;font-size:20px}
+.presenter-thumbs{grid-column:2;grid-row:3;display:flex;align-items:flex-start}
+.presenter-thumb{width:100%;border:1px solid #333;border-radius:8px;overflow:hidden;background:#000;position:relative;aspect-ratio:16/9;cursor:pointer;transition:border-color 0.2s}
+.presenter-thumb:hover{border-color:#555}
+.presenter-thumb-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.8);padding:6px 12px;font-size:13px;color:#888}
 .presenter-slide-num{font-family:var(--font-mono);font-size:20px;color:#666}
 .presenter-close{background:none;border:1px solid #444;color:#999;padding:6px 14px;border-radius:6px;font-size:18px;cursor:pointer;font-family:var(--font-body)}
 .presenter-close:hover{border-color:var(--red);color:var(--red)}
@@ -578,8 +582,8 @@ td{padding:14px 18px;border-bottom:1px solid rgba(0,0,0,0.06)}
 .index-card .idx-label{font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:4px}
 .index-card .idx-title{font-size:16px;color:#ddd;font-weight:500;line-height:1.3}
 .audience-mode .nav-bar,.audience-mode .progress-bar{display:none!important}
-.presenter-window .presenter-overlay{display:grid!important;grid-template-columns:2fr 1fr;grid-template-rows:auto 1fr auto;gap:20px;position:fixed;inset:0}
-.presenter-window .presenter-overlay .presenter-nav{grid-column:1/-1}
+.presenter-window .presenter-overlay{display:grid!important;grid-template-columns:2fr 1fr;grid-template-rows:auto 1fr auto auto;gap:16px;position:fixed;inset:0}
+.presenter-window .presenter-overlay .presenter-nav{grid-column:1}
 </style>
 </head>
 <body>
@@ -606,6 +610,12 @@ td{padding:14px 18px;border-bottom:1px solid rgba(0,0,0,0.06)}
       <span style="font-size:17px;color:#555"><span class="kbd">F</span> Fullscreen</span>
       <span style="font-size:17px;color:#555"><span class="kbd">P</span> Presenter</span>
       <span style="font-size:17px;color:#555"><span class="kbd">R</span> Reset timer</span>
+    </div>
+  </div>
+  <div class="presenter-thumbs">
+    <div class="presenter-thumb" id="presenterNextThumb" onclick="goForward()">
+      <div id="presenterNextPreview" style="width:100%;height:100%;position:relative;overflow:hidden"></div>
+      <div class="presenter-thumb-label">Next</div>
     </div>
   </div>
   <div class="presenter-nav">
@@ -983,7 +993,13 @@ clone.querySelectorAll('.anim-line').forEach(e=>{e.classList.add('show');e.style
 clone.querySelectorAll('.anim-type').forEach(e=>{e.style.width='100%';e.style.borderRight='none';e.style.animation='none';});
 // Show output boxes for revealed phases
 for(let p=0;p<currentStep;p++){const ob=clone.querySelector(`.term-output[data-phase="${p}"]`);if(ob){ob.style.display='block';ob.style.opacity='1';ob.style.transform='none';}}
-prev.innerHTML='';prev.appendChild(clone);}
+prev.innerHTML='';prev.appendChild(clone);
+// Render next thumbnail
+renderThumb('presenterNextPreview',current+1,true);
+document.getElementById('presenterNextThumb').style.opacity=current<total-1?'1':'0.3';
+document.getElementById('presenterNextThumb').style.pointerEvents=current<total-1?'auto':'none';
+}
+function renderThumb(containerId,idx,showAll){const container=document.getElementById(containerId);container.innerHTML='';if(idx<0||idx>=total)return;const s=slides[idx];const cl=s.cloneNode(true);const vw=window.innerWidth;const vh=window.innerHeight;const pw=container.offsetWidth||300;const ph=container.offsetHeight||170;const scaleX=pw/vw;const scaleY=ph/vh;const sc=Math.min(scaleX,scaleY);cl.style.cssText=`position:absolute;top:0;left:0;width:${vw}px;height:${vh}px;opacity:1;visibility:visible;transform:scale(${sc});transform-origin:top left;pointer-events:none;overflow:hidden;`;cl.classList.add('active');const maxSt=showAll?getMaxStep(s):0;cl.querySelectorAll('[data-step]').forEach(e=>{if(parseInt(e.getAttribute('data-step'))<=maxSt)e.classList.add('visible');});cl.querySelectorAll('.anim-line').forEach(e=>{e.classList.add('show');e.style.opacity='1';e.style.transform='none';});cl.querySelectorAll('.anim-type').forEach(e=>{e.style.width='100%';e.style.borderRight='none';e.style.animation='none';});for(let p=0;p<maxSt;p++){const ob=cl.querySelector(`.term-output[data-phase="${p}"]`);if(ob){ob.style.display='block';ob.style.opacity='1';ob.style.transform='none';}}container.appendChild(cl);}
 // === Dual-window presenter mode via BroadcastChannel ===
 const channel=new BroadcastChannel('deck-sync');
 const urlParams=new URLSearchParams(window.location.search);
