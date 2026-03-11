@@ -1,0 +1,10 @@
+{
+  "name": "code-modernization",
+  "version": "1.0.0",
+  "description": "Enterprise code modernization plugin — orchestrates codebase discovery, stakeholder interviews, knowledge graph construction, migration slicing, golden dataset testing, and confidence-gated migration from legacy languages (COBOL, PL/SQL, etc.) to modern targets (Java, C#, Python, etc.).",
+  "author": {
+    "name": "Anthropic Solutions Engineering"
+  },
+  "license": "MIT",
+  "keywords": ["cobol", "migration", "modernization", "java", "legacy", "enterprise"]
+}

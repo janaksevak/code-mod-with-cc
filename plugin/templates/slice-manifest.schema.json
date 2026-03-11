@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Slice Manifest",
+  "description": "Defines migration slices — self-contained units of work derived from the knowledge graph.",
+  "type": "object",
+  "required": ["version", "slices"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "total_slices": {"type": "integer"},
+        "available": {"type": "integer"},
+        "claimed": {"type": "integer"},
+        "migrating": {"type": "integer"},
+        "approved": {"type": "integer"},
+        "merged": {"type": "integer"},
+        "complexity_breakdown": {
+          "type": "object",
+          "properties": {
+            "low": {"type": "integer"},
+            "medium": {"type": "integer"},
+            "high": {"type": "integer"},
+            "very_high": {"type": "integer"}
+          }
+        }
+      }
+    },
+    "slices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "programs", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^slice-[0-9]{3}$",
+            "description": "Unique slice identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name"
+          },
+          "programs": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Source program files in this slice"
+          },
+          "copybooks": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Shared data definitions used by programs in this slice"
+          },
+          "data_files": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Data files referenced by programs in this slice"
+          },
+          "all_components": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Complete list of all graph nodes in this slice"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["available", "claimed", "migrating", "validating", "review_required", "approved", "merged"],
+            "description": "Current status in the migration lifecycle"
+          },
+          "claimed_by": {
+            "type": ["string", "null"],
+            "description": "Engineer who claimed this slice"
+          },
+          "claimed_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "confidence_score": {
+            "type": ["number", "null"],
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Latest confidence score from validation"
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Migration priority (1 = highest)"
+          },
+          "complexity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "very_high"]
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Slice IDs that must be completed before this slice"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Free-text notes from engineers or orchestrator"
+          }
+        }
+      }
+    }
+  }
+}

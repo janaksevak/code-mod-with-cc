@@ -1,0 +1,82 @@
+# Code Modernization Project — {{PROJECT_NAME}}
+
+> This project uses the Code Modernization Plugin to manage migration from
+> {{SOURCE_LANGUAGE}} to {{TARGET_LANGUAGE}}.
+
+## Quick Start
+
+```bash
+# See overall orchestrator
+/modernize
+
+# Run codebase discovery
+/codemap
+/codemap --deep
+
+# Interview stakeholders
+/elicit orientation
+/elicit behavioral-contracts
+/elicit seam-mapping
+/elicit target-state
+/elicit constraints
+/elicit synthesis
+
+# Work with migration slices
+/query-slices
+/claim-slice slice-001
+/migrate slice-001
+
+# Validate
+/validate
+/validate --score-only
+
+# Bulk operations
+/batch --dry-run
+/batch
+```
+
+## Migration Strategy
+
+**MANDATORY**: Follow the testing-first approach:
+1. **Document** — Understand the source code completely
+2. **Golden Dataset** — Generate test data and capture reference outputs FIRST
+3. **Implement** — Write the target code to match the golden dataset exactly
+4. **Validate** — Byte-for-byte comparison with confidence scoring
+
+Never start coding without a golden dataset.
+
+## Artifacts
+
+All generated artifacts live in `artifacts/`:
+- `codemap.json` — Codebase analysis results
+- `dependency-graph.json` — Program dependency graph
+- `knowledge-graph.json` — Full knowledge graph
+- `interview.json` — Stakeholder interview responses
+- `slice-manifest.json` — Migration slices and their status
+- `semantic-diff-rules.json` — Acceptable difference rules
+- `confidence-score.json` — Latest confidence score
+- `validation-results.json` — Latest validation results
+
+## Configuration
+
+Edit `modernization.config.json` to customize:
+- Source/target languages
+- Scoring weights and thresholds
+- Build commands
+- Validation settings
+- Slicing strategy
+
+## Confidence Scoring
+
+Scores range from 0-100:
+- **>= 95**: Auto-approve eligible
+- **80-94**: Human review recommended
+- **< 80**: Human review REQUIRED (gate blocks commit)
+
+## Key Rules
+
+1. Never skip the golden dataset. Tests before code.
+2. Replicate source behavior exactly — don't "improve" it.
+3. If validation fails 3 times, step back and investigate.
+4. Save progress to artifacts/ so work is resumable.
+5. Use semantic diff rules for known-acceptable differences only.

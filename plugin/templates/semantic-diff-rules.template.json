@@ -1,0 +1,47 @@
+{
+  "$comment": "Semantic diff rules — define acceptable differences between source and target outputs. Copy to artifacts/semantic-diff-rules.json and customize for your migration.",
+  "version": "1.0",
+  "rules": [
+    {
+      "id": "trailing-spaces",
+      "description": "Allow trailing space differences in alphanumeric fields",
+      "type": "regex_replace",
+      "pattern": " +$",
+      "replacement": "",
+      "apply_to": "both",
+      "enabled": false,
+      "_note": "Enable if your target trims trailing spaces differently than the source"
+    },
+    {
+      "id": "newline-normalization",
+      "description": "Normalize line endings (CRLF vs LF)",
+      "type": "regex_replace",
+      "pattern": "\\r\\n",
+      "replacement": "\\n",
+      "apply_to": "both",
+      "enabled": false,
+      "_note": "Enable if source and target run on different platforms"
+    },
+    {
+      "id": "numeric-tolerance-example",
+      "description": "Example: allow 0.01 tolerance on a numeric field at offset 60, length 9",
+      "type": "numeric_tolerance",
+      "field_offset": 60,
+      "field_length": 9,
+      "tolerance": 0.01,
+      "enabled": false,
+      "_note": "Customize offset, length, and tolerance for your fields"
+    },
+    {
+      "id": "date-format-example",
+      "description": "Example: source uses YYYYMMDD, target uses YYYY-MM-DD",
+      "type": "field_transform",
+      "field_offset": 30,
+      "field_length": 10,
+      "transform": "strip_dashes",
+      "apply_to": "java",
+      "enabled": false,
+      "_note": "Customize for your date fields"
+    }
+  ]
+}

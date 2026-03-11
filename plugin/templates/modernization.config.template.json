@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "_comment": "Code Modernization Plugin Configuration. Copy this to your project root as modernization.config.json and customize.",
+
+  "project": {
+    "name": "{{PROJECT_NAME}}",
+    "description": "{{PROJECT_DESCRIPTION}}",
+    "source_language": "cobol",
+    "target_language": "java",
+    "source_root": ".",
+    "target_root": "."
+  },
+
+  "scoring": {
+    "weights": {
+      "byte_match": 0.50,
+      "coverage": 0.20,
+      "quirks_documented": 0.15,
+      "semantic_match": 0.10,
+      "structural": 0.05
+    },
+    "thresholds": {
+      "auto_approve": 95,
+      "review_recommended": 80
+    }
+  },
+
+  "validation": {
+    "comparison_mode": "byte_for_byte",
+    "semantic_diff_rules": "artifacts/semantic-diff-rules.json",
+    "golden_dataset_dir": "{{PROGRAM}}/golden_dataset/expected-outputs",
+    "target_output_dir": "{{PROGRAM}}/{{TARGET_LANG}}/test-outputs"
+  },
+
+  "slicing": {
+    "strategy": "entry-point",
+    "max_slice_size": 10,
+    "auto_claim": false
+  },
+
+  "build": {
+    "command": "cd {{PROGRAM}}/java && mvn clean package -q",
+    "test_command": "cd {{PROGRAM}}/java && mvn test -q"
+  },
+
+  "hooks": {
+    "post_write_java": true,
+    "protect_env_files": true,
+    "protect_golden_dataset": true
+  },
+
+  "interview": {
+    "sessions": [
+      "orientation",
+      "behavioral-contracts",
+      "seam-mapping",
+      "target-state",
+      "constraints",
+      "synthesis"
+    ]
+  },
+
+  "artifacts_dir": "artifacts",
+  "scripts_dir": ".modernization/scripts"
+}

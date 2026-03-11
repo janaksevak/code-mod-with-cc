@@ -1,0 +1,44 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write(*.java)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[hook] Java file written — validation will run after build.'"
+          }
+        ]
+      },
+      {
+        "matcher": "Write(*.py)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f artifacts/slice-manifest.json ]; then echo '[hook] Python file written in migration context.'; fi"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write(.env*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'BLOCKED: .env files are protected — put config in modernization.config.json or application.yml' >&2; exit 2"
+          }
+        ]
+      },
+      {
+        "matcher": "Write(artifacts/golden_dataset/*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'BLOCKED: Golden dataset is immutable once created. To regenerate, delete the golden_dataset directory first.' >&2; exit 2"
+          }
+        ]
+      }
+    ]
+  }
+}
