@@ -433,7 +433,7 @@
     "cards": [
       {
         "icon": "1",
-        "heading": "Test the Migration Kit",
+        "heading": "Test the Modernization Kit",
         "text": "Pilot the starter kit with a real customer engagement. Help us pressure-test it in the field.",
         "color": "accent"
       },
@@ -452,7 +452,8 @@
     ],
     "big_bottom": "Your expertise when powered by Claude Code truly can solve the code modernization problem.",
     "notes": "So here's the ask. Three ways to work together. First - help us test the migration kit. Pick a customer, run the starter kit on a real engagement, and tell us what works and what doesn't. We need field-tested feedback to make this great. Second - help us build language- and domain-specific accelerators. You know banking COBOL, insurance PL/I, healthcare HL7. We know Claude. Together we can build vertical playbooks that neither of us can build alone. Third - give us product feedback. What features in Claude Code would make modernization faster? Better MCP integrations? Larger context windows? Specific language support? Tell us - we're building this roadmap together.",
-    "qr_under_card": 1
+    "qr_under_card": 1,
+    "qr_immediate": true
   },
   {
     "type": "hero",
@@ -994,9 +995,9 @@ const cardHtml=`<div data-step="${ci+1}" style="flex:1;padding:32px 28px;border-
 <h3 style="font-size:26px;font-family:var(--font-display);color:var(--text);margin:0">${c.heading}</h3>
 <p style="font-size:18px;line-height:1.5;color:var(--text2);margin:0">${c.text}</p>
 </div>`;
-if(ci===qrIdx){return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:16px">${cardHtml}<div data-step="${d.cards.length+1}" style="display:flex;flex-direction:column;align-items:center;gap:8px">${qrSvg}<span style="font-size:15px;color:var(--text3);font-weight:600">Scan to register</span></div></div>`;}
+if(ci===qrIdx){const qrStep=d.qr_immediate?'0':String(d.cards.length+1);return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:16px">${cardHtml}<div data-step="${qrStep}" style="display:flex;flex-direction:column;align-items:center;gap:8px">${qrSvg}<span style="font-size:15px;color:var(--text3);font-weight:600">Scan to register</span></div></div>`;}
 return cardHtml;}).join('');
-const bottom=d.big_bottom?`<p data-step="${d.cards.length+2}" style="text-align:center;font-size:24px;font-family:var(--font-display);color:var(--text);margin:0;margin-top:32px;padding:0 60px">${d.big_bottom}</p>`:'';
+const bottom=d.big_bottom?`<p data-step="${d.cards.length+1}" style="text-align:center;font-size:24px;font-family:var(--font-display);color:var(--text);margin:0;margin-top:32px;padding:0 60px">${d.big_bottom}</p>`:'';
 return`<div class="slide slide--light" data-slide="${i}" data-notes="${esc(d.notes)}" style="justify-content:center;padding-top:2vh;gap:0">
 <div data-step="0" class="label" style="margin-bottom:10px">${d.label}</div>
 <h1 data-step="0" style="margin-top:0;margin-bottom:24px;font-size:44px;color:var(--text)">${d.title}</h1>
